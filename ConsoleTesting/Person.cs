@@ -12,9 +12,6 @@ namespace ConsoleTesting
     [DBTable("Person")]
     internal class Person : DBTable<Person>
     {
-        [DBColumn(true, false, "ID")]
-        public long ID { get; set; }
-
         [DBColumn("FirstName")]
         public string FirstName { get; set; }
 
@@ -40,6 +37,16 @@ namespace ConsoleTesting
             LastName = (string)reader["LastName"];
             Age = (int)reader["Age"];
             Weight = (double)reader["Weight"];
+        }
+
+        public override string FormatUpdate()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string FormatInsert()
+        {
+            throw new NotImplementedException();
         }
     }
 }

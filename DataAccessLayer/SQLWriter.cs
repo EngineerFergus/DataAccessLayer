@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
+using DataAccessLayer.Attributes;
 
 namespace DataAccessLayer
 {
@@ -11,6 +12,9 @@ namespace DataAccessLayer
     {
         public static string WriteCreateString(Type type)
         {
+            Attribute[] attributes = Attribute.GetCustomAttributes(type);
+            PropertyInfo[] fields = type.GetProperties();
+
             return "Create";
         }
 

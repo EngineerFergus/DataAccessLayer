@@ -59,6 +59,7 @@ namespace DataAccessLayer
                 {
                     cmd.CommandText = table.GetInsert();
                     cmd.ExecuteNonQuery();
+                    table.ID = conn.LastInsertRowId;
                 }
 
                 conn.Close();
@@ -81,6 +82,7 @@ namespace DataAccessLayer
                             {
                                 cmd.CommandText = tables[i].GetInsert();
                                 cmd.ExecuteNonQuery();
+                                tables[i].ID = conn.LastInsertRowId;
                             }
                         }
 

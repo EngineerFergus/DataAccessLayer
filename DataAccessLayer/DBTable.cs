@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataAccessLayer.Attributes;
 
 namespace DataAccessLayer
 {
@@ -15,6 +16,8 @@ namespace DataAccessLayer
         private static string? ReadString;
         private static string? UpdateString;
 
+        [DBPrimaryKey]
+        public long ID { get; set; }
         public string GetCreate()
         {
             if(CreateString is null)
@@ -42,7 +45,7 @@ namespace DataAccessLayer
                 InsertString = SQLWriter.WriteInsertString(GetType());
             }
 
-            return InsertString;
+            return FormatInsert();
         }
 
         public string GetRead()
@@ -62,9 +65,11 @@ namespace DataAccessLayer
                 UpdateString = SQLWriter.WriteUpdateString(GetType());
             }
 
-            return UpdateString;
+            return FormatUpdate();
         }
 
         public abstract void SetData(DbDataReader reader);
+        public abstract string FormatInsert();
+        public abstract string FormatUpdate();
     }
 }

@@ -10,6 +10,7 @@ namespace DataAccessLayer
 {
     public interface IDBTable
     {
+        long ID { get; set; }
         string GetCreate();
         string GetDelete();
         string GetInsert();
