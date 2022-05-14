@@ -48,5 +48,10 @@ namespace ConsoleTesting
         {
             return string.Format(InsertString, FirstName, LastName, Age, Weight);
         }
+
+        protected override string FormatDelete()
+        {
+            return string.Format(DeleteString, ID);
+        }
     }
 }

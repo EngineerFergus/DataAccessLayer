@@ -90,7 +90,7 @@ namespace DataAccessLayer
 
         public string GetDelete()
         {
-            return DeleteString;
+            return FormatDelete();
         }
 
         public string GetInsert()
@@ -111,5 +111,6 @@ namespace DataAccessLayer
         public abstract void SetData(DbDataReader reader);
         protected abstract string FormatInsert();
         protected abstract string FormatUpdate();
+        protected abstract string FormatDelete();
     }
 }

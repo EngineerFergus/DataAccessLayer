@@ -16,7 +16,7 @@ namespace DataAccessLayer
 
             if(dBTableAttribute is null)
             {
-                throw new Exception($"Excpetion in {nameof(WriteCreateString)}, provided type did not contain {nameof(DBTableAttribute)}.");
+                throw new Exception($"Exception in {nameof(WriteCreateString)}, provided type did not contain {nameof(DBTableAttribute)}.");
             }
 
             DBPrimaryKeyAttribute? primaryKey = null;
@@ -87,7 +87,14 @@ namespace DataAccessLayer
 
         public static string WriteReadString(Type type)
         {
-            return "Read";
+            DBTableAttribute? dBTableAttribute = type.GetCustomAttribute<DBTableAttribute>();
+
+            if (dBTableAttribute is null)
+            {
+                throw new Exception($"Exception in {nameof(WriteCreateString)}, provided type did not contain {nameof(DBTableAttribute)}.");
+            }
+
+            return $"SELECT * FROM {dBTableAttribute.Name}";
         }
 
         public static string WriteUpdateString(Type type)
