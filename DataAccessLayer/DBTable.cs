@@ -11,13 +11,13 @@ namespace DataAccessLayer
     public abstract class DBTable<T> : IDBTable
     {
         private static string? _CreateString;
-        protected static string CreateString
+        protected string CreateString
         {
             get
             {
                 if(_CreateString == null) 
                 { 
-                    _CreateString = SQLWriter.WriteCreateString(typeof(DBTable<T>));
+                    _CreateString = SQLWriter.WriteCreateString(GetType());
                 }
 
                 return _CreateString;
@@ -25,13 +25,13 @@ namespace DataAccessLayer
         }
 
         private static string? _DeleteString;
-        protected static string DeleteString
+        protected string DeleteString
         {
             get
             {
                 if(_DeleteString is null)
                 {
-                    _DeleteString = SQLWriter.WriteDeleteString(typeof(DBTable<T>));
+                    _DeleteString = SQLWriter.WriteDeleteString(GetType());
                 }
 
                 return _DeleteString;
@@ -39,13 +39,13 @@ namespace DataAccessLayer
         }
 
         private static string? _InsertString;
-        protected static string InsertString
+        protected string InsertString
         {
             get
             {
                 if(_InsertString is null)
                 {
-                    _InsertString = SQLWriter.WriteInsertString(typeof(DBTable<T>));
+                    _InsertString = SQLWriter.WriteInsertString(GetType());
                 }
 
                 return _InsertString;
@@ -53,13 +53,13 @@ namespace DataAccessLayer
         }
 
         private static string? _ReadString;
-        protected static string ReadString
+        protected string ReadString
         {
             get
             {
                 if(_ReadString is null)
                 {
-                    _ReadString = SQLWriter.WriteReadString(typeof(DBTable<T>));
+                    _ReadString = SQLWriter.WriteReadString(GetType());
                 }
 
                 return _ReadString;
@@ -67,13 +67,13 @@ namespace DataAccessLayer
         }
 
         private static string? _UpdateString;
-        protected static string UpdateString
+        protected string UpdateString
         {
             get
             {
                 if(_UpdateString is null)
                 {
-                    _UpdateString = SQLWriter.WriteUpdateString(typeof(DBTable<T>));
+                    _UpdateString = SQLWriter.WriteUpdateString(GetType());
                 }
 
                 return _UpdateString;
