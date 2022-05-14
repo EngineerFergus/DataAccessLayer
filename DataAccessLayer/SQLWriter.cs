@@ -10,8 +10,6 @@ namespace DataAccessLayer
 {
     public static class SQLWriter
     {
-        public const string CREATE = "CREATE TABLE IF NOT EXISTS";
-
         public static string WriteCreateString(Type type)
         {
             DBTableAttribute? dBTableAttribute = type.GetCustomAttribute<DBTableAttribute>();
@@ -60,16 +58,18 @@ namespace DataAccessLayer
             for(int i = 0; i < columnTypes.Count; i++)
             {
                 var columnType = columnTypes[i];
+                Type objType = columnType.Item1;
+                objType = Nullable.GetUnderlyingType(objType) ?? objType;
 
-                if(columnType.Item1.GetType() == typeof(int))
+                if(objType == typeof(int))
                 {
                     sb.Append($"{columnType.Item2.Name} INT NOT NULL");
                 }
-                else if(columnType.Item1.GetType() == typeof(string))
+                else if(objType == typeof(string))
                 {
                     sb.Append($"{columnType.Item2.Name} STRING NOT NULL");
                 }
-                else if(columnType.Item1.GetType() == typeof(double))
+                else if(objType == typeof(double))
                 {
                     sb.Append($"{columnType.Item2.Name} DOUBLE NOT NULL");
                 }
