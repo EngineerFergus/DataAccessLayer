@@ -10,61 +10,101 @@ namespace DataAccessLayer
 {
     public abstract class DBTable<T> : IDBTable
     {
-        protected static string? CreateString;
-        protected static string? DeleteString;
-        protected static string? InsertString;
-        protected static string? ReadString;
-        protected static string? UpdateString;
+        private static string? _CreateString;
+        protected static string CreateString
+        {
+            get
+            {
+                if(_CreateString == null) 
+                { 
+                    _CreateString = SQLWriter.WriteCreateString(typeof(DBTable<T>));
+                }
+
+                return _CreateString;
+            }
+        }
+
+        private static string? _DeleteString;
+        protected static string DeleteString
+        {
+            get
+            {
+                if(_DeleteString is null)
+                {
+                    _DeleteString = SQLWriter.WriteDeleteString(typeof(DBTable<T>));
+                }
+
+                return _DeleteString;
+            }
+        }
+
+        private static string? _InsertString;
+        protected static string InsertString
+        {
+            get
+            {
+                if(_InsertString is null)
+                {
+                    _InsertString = SQLWriter.WriteInsertString(typeof(DBTable<T>));
+                }
+
+                return _InsertString;
+            }
+        }
+
+        private static string? _ReadString;
+        protected static string ReadString
+        {
+            get
+            {
+                if(_ReadString is null)
+                {
+                    _ReadString = SQLWriter.WriteReadString(typeof(DBTable<T>));
+                }
+
+                return _ReadString;
+            }
+        }
+
+        private static string? _UpdateString;
+        protected static string UpdateString
+        {
+            get
+            {
+                if(_UpdateString is null)
+                {
+                    _UpdateString = SQLWriter.WriteUpdateString(typeof(DBTable<T>));
+                }
+
+                return _UpdateString;
+            }
+        }
+
 
         [DBPrimaryKey]
         public long ID { get; set; }
         public string GetCreate()
         {
-            if(CreateString is null)
-            {
-                CreateString = SQLWriter.WriteCreateString(GetType());
-            }
-
             return CreateString;
         }
 
         public string GetDelete()
         {
-            if(DeleteString is null)
-            {
-                DeleteString = SQLWriter.WriteDeleteString(GetType());
-            }
-
             return DeleteString;
         }
 
         public string GetInsert()
         {
-            if(InsertString is null)
-            {
-                InsertString = SQLWriter.WriteInsertString(GetType());
-            }
-
             return FormatInsert();
         }
 
         public string GetRead()
         {
-            if(ReadString is null)
-            {
-                ReadString = SQLWriter.WriteReadString(GetType());
-            }
-
             return ReadString;
         }
 
         public string GetUpdate()
         {
-            if(UpdateString is null)
-            {
-                UpdateString = SQLWriter.WriteUpdateString(GetType());
-            }
-
             return FormatUpdate();
         }
 
