@@ -12,16 +12,16 @@ namespace ConsoleTesting
     [DBTable("Person")]
     internal class Person : DBTable<Person>
     {
-        [DBColumn("FirstName")]
+        [DBColumn("FirstName", 1)]
         public string FirstName { get; set; }
 
-        [DBColumn("LastName")]
+        [DBColumn("LastName", 2)]
         public string LastName { get; set; }
 
-        [DBColumn("Age")]
+        [DBColumn("Age", 3)]
         public int Age { get; set; }
 
-        [DBColumn("Weight")]
+        [DBColumn("Weight", 4)]
         public double Weight { get; set; }
 
         public Person()
@@ -39,14 +39,14 @@ namespace ConsoleTesting
             Weight = (double)reader["Weight"];
         }
 
-        public override string FormatUpdate()
+        protected override string FormatUpdate()
         {
-            throw new NotImplementedException();
+            return string.Format(UpdateString, ID, FirstName, LastName, Age, Weight);
         }
 
-        public override string FormatInsert()
+        protected override string FormatInsert()
         {
-            throw new NotImplementedException();
+            return string.Format(InsertString, FirstName, LastName, Age, Weight);
         }
     }
 }

@@ -10,11 +10,11 @@ namespace DataAccessLayer
 {
     public abstract class DBTable<T> : IDBTable
     {
-        private static string? CreateString;
-        private static string? DeleteString;
-        private static string? InsertString;
-        private static string? ReadString;
-        private static string? UpdateString;
+        protected static string? CreateString;
+        protected static string? DeleteString;
+        protected static string? InsertString;
+        protected static string? ReadString;
+        protected static string? UpdateString;
 
         [DBPrimaryKey]
         public long ID { get; set; }
@@ -69,7 +69,7 @@ namespace DataAccessLayer
         }
 
         public abstract void SetData(DbDataReader reader);
-        public abstract string FormatInsert();
-        public abstract string FormatUpdate();
+        protected abstract string FormatInsert();
+        protected abstract string FormatUpdate();
     }
 }
