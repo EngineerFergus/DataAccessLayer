@@ -9,6 +9,7 @@ using DataAccessLayer.Attributes;
 
 namespace Tests
 {
+    [DBTable("Person")]
     internal class Person : DBTable<Person>
     {
         [DBColumn("FirstName", 1)]

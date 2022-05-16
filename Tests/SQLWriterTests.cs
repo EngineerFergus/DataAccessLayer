@@ -10,42 +10,63 @@ namespace Tests
     [TestClass]
     public class SQLWriterTests
     {
-        private Person person = new Person();
+        private Person person = new Person()
+        {
+            FirstName = "Joe",
+            LastName = "Shmo",
+            Age = 25,
+            Weight = 182.6
+        };
 
         [TestMethod]
         public void WritesCreate()
         {
-            string create = "CREATE TABLE IF NOT EXISTS Person(" +
-                ")";
+            string create = "CREATE TABLE IF NOT EXISTS Person (" +
+                "ID INTEGER PRIMARY KEY NOT NULL, " +
+                "FirstName STRING NOT NULL, " +
+                "LastName STRING NOT NULL, " +
+                "Age INT NOT NULL, " +
+                "Weight DOUBLE NOT NULL)";
             Assert.AreEqual(create, person.GetCreate());
         }
 
         [TestMethod]
         public void WritesRead()
         {
-            string read = "This has not been written yet";
+            string read = "SELECT * FROM Person";
             Assert.AreEqual(read, person.GetRead());
         }
 
         [TestMethod]
         public void WritesInsert()
         {
-            string insert = "This has not been written yet";
+            string insert = "INSERT INTO Person (" +
+                "FirstName, " +
+                "LastName, " +
+                "Age, " +
+                "Weight) " +
+                "VALUES ('{0}', '{1}', {2}, {3})";
             Assert.AreEqual(insert, person.GetInsert());
         }
 
         [TestMethod]
         public void WritesUpdate()
         {
-            string update = "Not written";
-            Assert.AreEqual(update, person.GetUpdate());
+            string update = "UPDATE Person SET " +
+                "FirstName = '{1}', " +
+                "LastName = '{2}', " +
+                "Age = {3}, " +
+                "Weight = {4} " +
+                "WHERE ID = {0}";
+            Assert.AreEqual(string.Format(update, person.ID, person.FirstName, person.LastName, person.Age, person.Weight),
+                person.GetUpdate());
         }
 
         [TestMethod]
         public void WritesDelete()
         {
-            string delete = "not written";
-            Assert.AreEqual(delete, person.GetDelete());
+            string delete = "DELETE FROM Person WHERE ID = {0}";
+            Assert.AreEqual(string.Format(delete, person.ID), person.GetDelete());
         }
     }
 }
