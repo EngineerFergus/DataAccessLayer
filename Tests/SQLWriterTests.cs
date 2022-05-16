@@ -46,7 +46,8 @@ namespace Tests
                 "Age, " +
                 "Weight) " +
                 "VALUES ('{0}', '{1}', {2}, {3})";
-            Assert.AreEqual(insert, person.GetInsert());
+            Assert.AreEqual(string.Format(insert, person.FirstName, person.LastName, person.Age, person.Weight), 
+                person.GetInsert());
         }
 
         [TestMethod]
