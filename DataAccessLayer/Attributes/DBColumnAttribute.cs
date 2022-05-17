@@ -13,7 +13,7 @@ namespace DataAccessLayer.Attributes
         public string Name { get; }
         public int Number { get; }
 
-        public DBColumnAttribute(bool isParentKey, string name, int number)
+        public DBColumnAttribute(string name, int number, bool isParentKey)
         {
             IsParentKey = isParentKey;
             Name = name;
