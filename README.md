@@ -16,3 +16,12 @@ The DAL provides ways to perform basic CRUD operations on tables. These operatio
 - Read all contents of a table
 - Delete a single object from a table
 - Delete a collection of objects from a table
+
+## Advanced CRUD
+TODO Implement the following operations
+- Read single object by ID
+- Drop table
+- Update child IDs when foreign key is present and changes state
+- Write SQL statements with foreign key when present
+
+Research best ways to handle the tree like nature that comes from using foreign keys. Should the child/referencing tables be inserted as soon as the parent/referenced table is inserted? Or should each object that is considered a child/referencing table just update it's foreign key field and when it is inserted is determined later?
