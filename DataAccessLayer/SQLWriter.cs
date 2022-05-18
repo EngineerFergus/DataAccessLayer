@@ -105,7 +105,48 @@ namespace DataAccessLayer
 
         public static string WriteInsertString(Type type)
         {
-            return "Insert";
+            DBTableAttribute dBTable = SearchForDBTable(type);
+            PropertyInfo[] properties = type.GetProperties();
+
+            DBPrimaryKeyAttribute primaryKey = SearchForPrimaryKey(properties);
+            List<Tuple<Type, DBColumnAttribute>> columnTypes = SearchForDBColumns(properties);
+            columnTypes = columnTypes.OrderBy(x => x.Item2.Number).ToList();
+
+            StringBuilder fullInsert = new StringBuilder();
+            StringBuilder tableNames = new StringBuilder();
+            StringBuilder formatters = new StringBuilder();
+
+            fullInsert.Append($"INSERT INTO {dBTable.Name} (");
+
+            for(int i = 0; i < columnTypes.Count; i++)
+            {
+                Type columnType = columnTypes[i].Item1;
+                DBColumnAttribute columnAttribute = columnTypes[i].Item2;
+
+                tableNames.Append($"{columnAttribute.Name}");
+
+                if (IsString(columnType))
+                {
+                    formatters.Append($"'{{{i}}}'");
+                }
+                else
+                {
+                    formatters.Append($"{{{i}}}");
+                }
+
+                if(i < columnTypes.Count - 1)
+                {
+                    tableNames.Append(", ");
+                    formatters.Append(", ");
+                }
+            }
+
+            fullInsert.Append(tableNames.ToString());
+            fullInsert.Append(") VALUES (");
+            fullInsert.Append(formatters.ToString());
+            fullInsert.Append(')');
+
+            return fullInsert.ToString();
         }
 
         public static string WriteDeleteString(Type type)
@@ -169,6 +210,13 @@ namespace DataAccessLayer
             }
 
             return columnTypes;
+        }
+
+        private static bool IsString(Type type)
+        {
+            Type objType = type;
+            objType = Nullable.GetUnderlyingType(objType) ?? objType;
+            return objType == typeof(string);
         }
     }
 }
