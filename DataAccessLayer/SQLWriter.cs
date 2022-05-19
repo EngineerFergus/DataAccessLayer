@@ -35,6 +35,11 @@ namespace DataAccessLayer
                     sb.Append($"{columnType.Item2.Name} INT NOT NULL");
                     isValidType = true;
                 }
+                else if(objType == typeof(long))
+                {
+                    sb.Append($"{columnType.Item2.Name} INTEGER NOT NULL");
+                    isValidType = true;
+                }
                 else if(objType == typeof(string))
                 {
                     sb.Append($"{columnType.Item2.Name} STRING NOT NULL");
@@ -50,6 +55,20 @@ namespace DataAccessLayer
                 {
                     sb.Append(", ");
                 }
+            }
+
+
+            bool hasForeignKey = TrySearchForForeignKey(properties, out DBForeignKeyAttribute? key,
+                out DBColumnAttribute? column);
+
+            if (hasForeignKey)
+            {
+                if (column is null || key is null)
+                {
+                    throw new Exception();
+                }
+
+                sb.Append($", FOREIGN KEY({column.Name}) REFERENCES {key.ForeignTableName}(ID)");
             }
 
             sb.Append(')');
@@ -209,6 +228,47 @@ namespace DataAccessLayer
             }
 
             return columnTypes;
+        }
+
+        private static bool TrySearchForForeignKey(PropertyInfo[] properties, out DBForeignKeyAttribute? key,
+            out DBColumnAttribute? column)
+        {
+            key = null;
+            column = null;
+            bool foundKey = false;
+            int count = 0;
+
+            foreach(PropertyInfo property in properties)
+            {
+                DBForeignKeyAttribute? k = property.GetCustomAttribute<DBForeignKeyAttribute>();
+
+                if(k != null)
+                {
+                    count++;
+                    if(count > 1)
+                    {
+                        throw new Exception($"Exception in {nameof(SQLWriter)}.{nameof(TrySearchForForeignKey)}, " +
+                            $"more than one {nameof(DBForeignKeyAttribute)} found on provided type.");
+                    }
+
+                    foundKey = true;
+                    key = k;
+
+                    DBColumnAttribute? c = property.GetCustomAttribute<DBColumnAttribute>();
+
+                    if(c is null)
+                    {
+                        throw new Exception($"Exception in {nameof(SQLWriter)}.{nameof(TrySearchForForeignKey)}, " +
+                            $"{nameof(DBForeignKeyAttribute)} was found on a property that did not have a " +
+                            $"a {nameof(DBColumnAttribute)}");
+                    }
+
+                    column = c;
+                }
+
+            }
+
+            return foundKey;
         }
 
         private static bool IsString(Type type)
