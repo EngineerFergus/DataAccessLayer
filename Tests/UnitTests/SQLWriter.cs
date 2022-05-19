@@ -10,14 +10,14 @@ namespace Tests.UnitTests
     [TestClass]
     public class SQLWriter
     {
-        private readonly Person person = new Person()
+        private readonly Person person = new()
         {
             FirstName = "Joe",
             LastName = "Shmo",
             Age = 25,
             Weight = 182.6
         };
-        private readonly Dog dog = new Dog()
+        private readonly Dog dog = new()
         {
             PersonID = 0,
             Name = "Flash",
