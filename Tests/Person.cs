@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataAccessLayer;
-using DataAccessLayer.Attributes;
 
 namespace Tests
 {
@@ -24,10 +23,13 @@ namespace Tests
         [DBColumn("Weight", 4)]
         public double Weight { get; set; }
 
+        public List<Dog> Dogs { get; }
+
         public Person()
         {
             FirstName = string.Empty;
             LastName = string.Empty;
+            Dogs = new List<Dog>();
         }
 
         public override void SetData(DbDataReader reader)
@@ -52,6 +54,19 @@ namespace Tests
         protected override string FormatDelete()
         {
             return string.Format(DeleteString, ID);
+        }
+
+        protected override void OnIDChanged()
+        {
+            foreach(Dog dog in Dogs)
+            {
+                dog.UpdateForeignKey(ID);
+            }
+        }
+
+        public override void UpdateForeignKey(long key)
+        {
+            return;
         }
     }
 }

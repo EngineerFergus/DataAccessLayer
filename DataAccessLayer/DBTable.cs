@@ -4,7 +4,6 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DataAccessLayer.Attributes;
 
 namespace DataAccessLayer
 {
@@ -80,9 +79,21 @@ namespace DataAccessLayer
             }
         }
 
-
+        private long _ID;
         [DBPrimaryKey]
-        public long ID { get; set; }
+        public long ID
+        {
+            get { return _ID; }
+            set
+            {
+                if(value != _ID)
+                {
+                    _ID = value;
+                    OnIDChanged();
+                }
+            }
+        }
+
         public string GetCreate()
         {
             return CreateString;
@@ -112,5 +123,7 @@ namespace DataAccessLayer
         protected abstract string FormatInsert();
         protected abstract string FormatUpdate();
         protected abstract string FormatDelete();
+        protected abstract void OnIDChanged();
+        public abstract void UpdateForeignKey(long key);
     }
 }

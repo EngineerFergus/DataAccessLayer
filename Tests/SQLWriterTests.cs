@@ -17,6 +17,13 @@ namespace Tests
             Age = 25,
             Weight = 182.6
         };
+        private Dog dog = new Dog()
+        {
+            PersonID = 0,
+            Name = "Flash",
+            Age = 4,
+            Weight = 35.2
+        };
 
         [TestMethod]
         public void WritesCreate()

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessLayer.Attributes
+namespace DataAccessLayer
 {
     [AttributeUsage(AttributeTargets.Class)]
     public sealed class DBTableAttribute : Attribute

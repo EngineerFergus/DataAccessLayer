@@ -17,5 +17,6 @@ namespace DataAccessLayer
         string GetUpdate();
         string GetRead();
         void SetData(DbDataReader reader);
+        void UpdateForeignKey(long key);
     }
 }
