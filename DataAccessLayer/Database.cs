@@ -49,7 +49,7 @@ namespace DataAccessLayer
             }
         }
 
-        public void Insert(IDBTable table)
+        public void Insert<T>(T table) where T : IDBTable, new()
         {
             using (SQLiteConnection conn = CreateConnection())
             {
@@ -66,7 +66,7 @@ namespace DataAccessLayer
             }
         }
 
-        public void InsertAll<T>(List<T> tables) where T : IDBTable
+        public void InsertAll<T>(List<T> tables) where T : IDBTable, new()
         {
             using (SQLiteConnection conn = CreateConnection())
             {
@@ -98,7 +98,7 @@ namespace DataAccessLayer
             }
         }
 
-        public void Update(IDBTable table)
+        public void Update<T>(T table) where T : IDBTable, new()
         {
             using (SQLiteConnection conn = CreateConnection())
             {
@@ -114,7 +114,7 @@ namespace DataAccessLayer
             }
         }
 
-        public void UpdateAll<T>(List<T> tables) where T : IDBTable
+        public void UpdateAll<T>(List<T> tables) where T : IDBTable, new()
         {
             using (SQLiteConnection conn = CreateConnection())
             {
@@ -186,7 +186,7 @@ namespace DataAccessLayer
             return collection;
         }
 
-        public void Delete(IDBTable table)
+        public void Delete<T>(T table) where T : IDBTable, new()
         {
             using (SQLiteConnection conn = CreateConnection())
             {
@@ -202,7 +202,7 @@ namespace DataAccessLayer
             }
         }
 
-        public void DeleteAll<T>(List<T> tables) where T : IDBTable
+        public void DeleteAll<T>(List<T> tables) where T : IDBTable, new()
         {
             using (SQLiteConnection conn = CreateConnection())
             {
