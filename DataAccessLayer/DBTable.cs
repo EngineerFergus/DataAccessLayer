@@ -65,6 +65,20 @@ namespace DataAccessLayer
             }
         }
 
+        private static string? _ReadByIDString;
+        protected string ReadByIDString
+        {
+            get
+            {
+                if(_ReadByIDString is null)
+                {
+                    _ReadByIDString = SQLWriter.WriteReadByIDString(GetType());
+                }
+
+                return _ReadByIDString;
+            }
+        }
+
         private static string? _UpdateString;
         protected string UpdateString
         {
@@ -112,6 +126,11 @@ namespace DataAccessLayer
         public string GetRead()
         {
             return ReadString;
+        }
+
+        public string GetReadByID()
+        {
+            return string.Format(ReadByIDString, ID);
         }
 
         public string GetUpdate()

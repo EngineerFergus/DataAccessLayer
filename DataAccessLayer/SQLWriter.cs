@@ -14,8 +14,8 @@ namespace DataAccessLayer
             DBTableAttribute dBTableAttribute = SearchForDBTable(type);
 
             PropertyInfo[] properties = type.GetProperties();
-            DBPrimaryKeyAttribute dBPrimaryKeyAttribute = SearchForPrimaryKey(properties);
-            List<Tuple<Type, DBColumnAttribute>> columnTypes = SearchForDBColumns(properties);
+            DBPrimaryKeyAttribute dBPrimaryKeyAttribute = SearchForPrimaryKey(properties, type);
+            List<Tuple<Type, DBColumnAttribute>> columnTypes = SearchForDBColumns(properties, type);
 
             columnTypes = columnTypes.OrderBy(x => x.Item2.Number).ToList();
 
@@ -58,7 +58,7 @@ namespace DataAccessLayer
             }
 
 
-            bool hasForeignKey = TrySearchForForeignKey(properties, out DBForeignKeyAttribute? key,
+            bool hasForeignKey = TrySearchForForeignKey(properties, type, out DBForeignKeyAttribute? key,
                 out DBColumnAttribute? column);
 
             if (hasForeignKey)
@@ -79,8 +79,32 @@ namespace DataAccessLayer
         public static string WriteReadString(Type type)
         {
             DBTableAttribute dBTableAttribute = SearchForDBTable(type);
+            PropertyInfo[] properties = type.GetProperties();
+            DBPrimaryKeyAttribute primaryKey = SearchForPrimaryKey(properties, type);
+            List<Tuple<Type, DBColumnAttribute>> columns = SearchForDBColumns(properties, type).OrderBy(x => x.Item2.Number).ToList();
 
-            return $"SELECT * FROM {dBTableAttribute.Name}";
+            StringBuilder read = new StringBuilder();
+            read.Append("SELECT ");
+
+            for(int i = 0; i < columns.Count; i++)
+            {
+                read.Append($"{columns[i].Item2.Name}");
+
+                if(i < columns.Count - 1)
+                {
+                    read.Append(", ");
+                }
+            }
+
+            read.Append($" FROM {dBTableAttribute.Name}");
+
+            return read.ToString();
+        }
+
+        public static string WriteReadByIDString(Type type)
+        {
+            string read = WriteReadString(type);
+            return $"{read} WHERE ID = {{0}}";
         }
 
         public static string WriteUpdateString(Type type)
@@ -88,8 +112,8 @@ namespace DataAccessLayer
             DBTableAttribute dBTableAttribute = SearchForDBTable(type);
             PropertyInfo[] properties = type.GetProperties();
 
-            DBPrimaryKeyAttribute primaryKey = SearchForPrimaryKey(properties);
-            List<Tuple<Type, DBColumnAttribute>> columns = SearchForDBColumns(properties).OrderBy(x => x.Item2.Number).ToList();
+            DBPrimaryKeyAttribute primaryKey = SearchForPrimaryKey(properties, type);
+            List<Tuple<Type, DBColumnAttribute>> columns = SearchForDBColumns(properties, type).OrderBy(x => x.Item2.Number).ToList();
 
             StringBuilder sb = new StringBuilder();
             sb.Append($"UPDATE {dBTableAttribute.Name} SET ");
@@ -126,8 +150,8 @@ namespace DataAccessLayer
             DBTableAttribute dBTable = SearchForDBTable(type);
             PropertyInfo[] properties = type.GetProperties();
 
-            DBPrimaryKeyAttribute primaryKey = SearchForPrimaryKey(properties);
-            List<Tuple<Type, DBColumnAttribute>> columnTypes = SearchForDBColumns(properties);
+            DBPrimaryKeyAttribute primaryKey = SearchForPrimaryKey(properties, type);
+            List<Tuple<Type, DBColumnAttribute>> columnTypes = SearchForDBColumns(properties, type);
             columnTypes = columnTypes.OrderBy(x => x.Item2.Number).ToList();
 
             StringBuilder fullInsert = new StringBuilder();
@@ -171,7 +195,7 @@ namespace DataAccessLayer
         {
             DBTableAttribute dBTableAttribute = SearchForDBTable(type);
             PropertyInfo[] properties = type.GetProperties();
-            DBPrimaryKeyAttribute primaryKey = SearchForPrimaryKey(properties);
+            DBPrimaryKeyAttribute primaryKey = SearchForPrimaryKey(properties, type);
 
             return $"DELETE FROM {dBTableAttribute.Name} WHERE ID = {{0}}";
         }
@@ -182,13 +206,14 @@ namespace DataAccessLayer
 
             if (dBTableAttribute is null)
             {
-                throw new Exception($"Exception in {nameof(WriteCreateString)}, provided type did not contain {nameof(DBTableAttribute)}.");
+                throw new Exception($"Exception in {nameof(DataAccessLayer)}.{nameof(WriteCreateString)}, " +
+                    $"provided type {type.FullName} did not contain {nameof(DBTableAttribute)}.");
             }
 
             return dBTableAttribute;
         }
 
-        private static DBPrimaryKeyAttribute SearchForPrimaryKey(PropertyInfo[] properties)
+        private static DBPrimaryKeyAttribute SearchForPrimaryKey(PropertyInfo[] properties, Type type)
         {
             DBPrimaryKeyAttribute? dBPrimaryKeyAttribute = null;
 
@@ -202,14 +227,14 @@ namespace DataAccessLayer
 
             if(dBPrimaryKeyAttribute is null)
             {
-                throw new Exception($"Exception in {nameof(SQLWriter)}, provided type did not contain a " +
-                    $"primary key attribute.");
+                throw new Exception($"Exception in {nameof(DataAccessLayer)}.{nameof(SQLWriter)}, " +
+                    $"provided type {type.FullName} did not contain a {nameof(DBPrimaryKeyAttribute)}.");
             }
 
             return dBPrimaryKeyAttribute;
         }
 
-        private static List<Tuple<Type, DBColumnAttribute>> SearchForDBColumns(PropertyInfo[] properties)
+        private static List<Tuple<Type, DBColumnAttribute>> SearchForDBColumns(PropertyInfo[] properties, Type type)
         {
             List<Tuple<Type, DBColumnAttribute>> columnTypes = new List<Tuple<Type, DBColumnAttribute>>();
 
@@ -224,13 +249,14 @@ namespace DataAccessLayer
 
             if (columnTypes.Count == 0)
             {
-                throw new Exception($"Exception in {nameof(WriteCreateString)}, provided type did not contain any columns.");
+                throw new Exception($"Exception in {nameof(DataAccessLayer)}.{nameof(SQLWriter)}, " +
+                    $"provided type {type.FullName} did not contain any properties with {nameof(DBColumnAttribute)}.");
             }
 
             return columnTypes;
         }
 
-        private static bool TrySearchForForeignKey(PropertyInfo[] properties, out DBForeignKeyAttribute? key,
+        private static bool TrySearchForForeignKey(PropertyInfo[] properties, Type type, out DBForeignKeyAttribute? key,
             out DBColumnAttribute? column)
         {
             key = null;
@@ -247,8 +273,8 @@ namespace DataAccessLayer
                     count++;
                     if(count > 1)
                     {
-                        throw new Exception($"Exception in {nameof(SQLWriter)}.{nameof(TrySearchForForeignKey)}, " +
-                            $"more than one {nameof(DBForeignKeyAttribute)} found on provided type.");
+                        throw new Exception($"Exception in {nameof(DataAccessLayer)}.{nameof(SQLWriter)}, " +
+                            $"more than one {nameof(DBForeignKeyAttribute)} found on provided type {type.FullName}.");
                     }
 
                     foundKey = true;
@@ -258,9 +284,9 @@ namespace DataAccessLayer
 
                     if(c is null)
                     {
-                        throw new Exception($"Exception in {nameof(SQLWriter)}.{nameof(TrySearchForForeignKey)}, " +
+                        throw new Exception($"Exception in {nameof(DataAccessLayer)}.{nameof(SQLWriter)}, " +
                             $"{nameof(DBForeignKeyAttribute)} was found on a property that did not have a " +
-                            $"a {nameof(DBColumnAttribute)}");
+                            $"{nameof(DBColumnAttribute)}");
                     }
 
                     column = c;

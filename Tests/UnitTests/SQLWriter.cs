@@ -40,8 +40,25 @@ namespace Tests.UnitTests
         [TestMethod]
         public void WritesRead()
         {
-            string read = "SELECT * FROM Person";
+            string read = "SELECT " +
+                "FirstName, " +
+                "LastName, " +
+                "Age, " +
+                "Weight " +
+                "FROM Person";
             Assert.AreEqual(read, person.GetRead());
+        }
+
+        [TestMethod]
+        public void WritesReadByID()
+        {
+            string read = "SELECT " +
+                "FirstName, " +
+                "LastName, " +
+                "Age, " +
+                "Weight " +
+                "FROM Person WHERE ID = {0}";
+            Assert.AreEqual(string.Format(read, person.ID), person.GetReadByID());
         }
 
         [TestMethod]
@@ -93,7 +110,12 @@ namespace Tests.UnitTests
         [TestMethod]
         public void WritesReadWithForeignKey()
         {
-            string read = "SELECT * FROM Dog";
+            string read = "SELECT " +
+                "PersonID, " +
+                "Name, " +
+                "Age, " +
+                "Weight " +
+                "FROM Dog";
             Assert.AreEqual(read, dog.GetRead());
         }
 
