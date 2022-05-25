@@ -84,7 +84,7 @@ namespace DataAccessLayer
             List<Tuple<Type, DBColumnAttribute>> columns = SearchForDBColumns(properties, type).OrderBy(x => x.Item2.Number).ToList();
 
             StringBuilder read = new StringBuilder();
-            read.Append("SELECT ");
+            read.Append("SELECT ID, ");
 
             for(int i = 0; i < columns.Count; i++)
             {

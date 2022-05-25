@@ -41,6 +41,7 @@ namespace Tests.UnitTests
         public void WritesRead()
         {
             string read = "SELECT " +
+                "ID, " +
                 "FirstName, " +
                 "LastName, " +
                 "Age, " +
@@ -53,6 +54,7 @@ namespace Tests.UnitTests
         public void WritesReadByID()
         {
             string read = "SELECT " +
+                "ID, " +
                 "FirstName, " +
                 "LastName, " +
                 "Age, " +
@@ -111,6 +113,7 @@ namespace Tests.UnitTests
         public void WritesReadWithForeignKey()
         {
             string read = "SELECT " +
+                "ID, " +
                 "PersonID, " +
                 "Name, " +
                 "Age, " +
