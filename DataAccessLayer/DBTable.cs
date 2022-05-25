@@ -130,7 +130,7 @@ namespace DataAccessLayer
 
         public string GetReadByID()
         {
-            return string.Format(ReadByIDString, ID);
+            return ReadByIDString;
         }
 
         public string GetUpdate()

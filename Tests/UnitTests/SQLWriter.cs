@@ -60,7 +60,7 @@ namespace Tests.UnitTests
                 "Age, " +
                 "Weight " +
                 "FROM Person WHERE ID = {0}";
-            Assert.AreEqual(string.Format(read, person.ID), person.GetReadByID());
+            Assert.AreEqual(read, person.GetReadByID());
         }
 
         [TestMethod]
@@ -120,6 +120,19 @@ namespace Tests.UnitTests
                 "Weight " +
                 "FROM Dog";
             Assert.AreEqual(read, dog.GetRead());
+        }
+
+        [TestMethod]
+        public void WriteReadByIDWithForeignKey()
+        {
+            string read = "SELECT " +
+                "ID, " +
+                "PersonID, " +
+                "Name, " +
+                "Age, " +
+                "Weight " +
+                "FROM Dog WHERE ID = {0}";
+            Assert.AreEqual(read, dog.GetReadByID());
         }
 
         [TestMethod]
