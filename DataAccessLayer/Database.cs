@@ -88,9 +88,11 @@ namespace DataAccessLayer
 
                         transaction.Commit();
                     }
-                    catch
+                    catch (Exception e)
                     {
                         transaction?.Rollback();
+                        throw new Exception($"Exception in {nameof(Database)}.{nameof(InsertAll)} with type {typeof(T).FullName}, " +
+                            $"{e}");
                     }
                 }
 
@@ -135,9 +137,11 @@ namespace DataAccessLayer
 
                         transaction.Commit();
                     }
-                    catch
+                    catch(Exception e)
                     {
                         transaction?.Rollback();
+                        throw new Exception($"Exception in {nameof(Database)}.{nameof(UpdateAll)} with type {typeof(T).FullName}, " +
+                            $"{e}");
                     }
                 }
 
@@ -174,9 +178,11 @@ namespace DataAccessLayer
 
                         transaction.Commit();
                     }
-                    catch
+                    catch (Exception e)
                     {
                         transaction?.Rollback();
+                        throw new Exception($"Exception in {nameof(Database)}.{nameof(ReadAll)} with type {typeof(T).FullName}, " +
+                            $"{e}");
                     }
                 }
 
@@ -184,6 +190,64 @@ namespace DataAccessLayer
             }
 
             return collection;
+        }
+
+        public T ReadByID<T>(long id) where T : IDBTable, new()
+        {
+            T table = new();
+
+            using (SQLiteConnection conn = CreateConnection())
+            {
+                conn.Open();
+
+                using (SQLiteCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = string.Format(table.GetReadByID(), id);
+
+                    using (SQLiteDataReader reader = cmd.ExecuteReader())
+                    {
+                        table.SetData(reader);
+                    }
+                }
+
+                conn.Close();
+            }
+
+            return table;
+        }
+
+        public bool TryReadByID<T>(long id, out T table) where T : IDBTable, new()
+        {
+            bool wasSuccessful = false;
+            table = new();
+
+            using (SQLiteConnection conn = CreateConnection())
+            {
+                conn.Open();
+
+                try
+                {
+                    using (SQLiteCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = string.Format(table.GetReadByID(), id);
+
+                        using (SQLiteDataReader reader = cmd.ExecuteReader())
+                        {
+                            table.SetData(reader);
+                        }
+                    }
+
+                    wasSuccessful = true;
+                }
+                catch
+                {
+                    wasSuccessful = false;
+                }
+
+                conn.Close();
+            }
+
+            return wasSuccessful;
         }
 
         public void Delete<T>(T table) where T : IDBTable, new()
@@ -223,9 +287,11 @@ namespace DataAccessLayer
 
                         transaction.Commit();
                     }
-                    catch
+                    catch (Exception e)
                     {
                         transaction?.Rollback();
+                        throw new Exception($"Exception in {nameof(Database)}.{nameof(DeleteAll)} with type {typeof(T).FullName}, " +
+                            $"{e}");
                     }
                 }
 
@@ -235,6 +301,12 @@ namespace DataAccessLayer
 
         private SQLiteConnection CreateConnection()
         {
+            if (!FileExists)
+            {
+                throw new Exception($"Exception in {nameof(Database)}.{nameof(CreateConnection)}, sqlite file did not exist " +
+                    $"at {Dir}");
+            }
+
             return new SQLiteConnection(@"Data Source= " + Dir);
         }
     }
