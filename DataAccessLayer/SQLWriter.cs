@@ -42,7 +42,7 @@ namespace DataAccessLayer
                 }
                 else if(objType == typeof(string))
                 {
-                    sb.Append($"{columnType.Item2.Name} STRING NOT NULL");
+                    sb.Append($"{columnType.Item2.Name} TEXT NOT NULL");
                     isValidType = true;
                 }
                 else if(objType == typeof(double))

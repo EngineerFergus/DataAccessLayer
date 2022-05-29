@@ -30,8 +30,8 @@ namespace Tests.UnitTests
         {
             string create = "CREATE TABLE IF NOT EXISTS Person (" +
                 "ID INTEGER PRIMARY KEY NOT NULL, " +
-                "FirstName STRING NOT NULL, " +
-                "LastName STRING NOT NULL, " +
+                "FirstName TEXT NOT NULL, " +
+                "LastName TEXT NOT NULL, " +
                 "Age INT NOT NULL, " +
                 "Weight DOUBLE NOT NULL)";
             Assert.AreEqual(create, person.GetCreate());
@@ -102,7 +102,7 @@ namespace Tests.UnitTests
             string create = "CREATE TABLE IF NOT EXISTS Dog (" +
                 "ID INTEGER PRIMARY KEY NOT NULL, " +
                 "PersonID INTEGER NOT NULL, " +
-                "Name STRING NOT NULL, " +
+                "Name TEXT NOT NULL, " +
                 "Age INT NOT NULL, " +
                 "Weight DOUBLE NOT NULL, " +
                 "FOREIGN KEY(PersonID) REFERENCES Person(ID))";
