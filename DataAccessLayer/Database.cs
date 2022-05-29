@@ -28,6 +28,14 @@ namespace DataAccessLayer
             else
             {
                 SQLiteConnection.CreateFile(Dir);
+                using (SQLiteConnection conn = CreateConnection())
+                {
+                    using (SQLiteCommand command = conn.CreateCommand())
+                    {
+                        command.CommandText = "PRAGMA FOREIGN_KEYS = ON";
+                        command.ExecuteNonQuery();
+                    }
+                }
             }
         }
 
