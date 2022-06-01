@@ -18,8 +18,4 @@
     <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="IntegationTests\" />
-  </ItemGroup>
-
 </Project>

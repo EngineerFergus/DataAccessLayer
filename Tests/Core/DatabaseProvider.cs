@@ -34,7 +34,7 @@ namespace Tests
 
             new Person()
             {
-                ID = 2,
+                ID = 3,
                 FirstName = "Keanu",
                 LastName = "Reeves",
                 Age = 52,
@@ -46,6 +46,7 @@ namespace Tests
         {
             new Dog()
             {
+                ID = 1,
                 PersonID = 1,
                 Name = "Sparky",
                 Age = 12,
@@ -54,6 +55,7 @@ namespace Tests
 
             new Dog()
             {
+                ID = 2,
                 PersonID = 1,
                 Name = "Flash",
                 Age = 4,
@@ -62,6 +64,7 @@ namespace Tests
 
             new Dog()
             {
+                ID = 3,
                 PersonID = 3,
                 Name = "Bruce",
                 Age = 7,
@@ -112,6 +115,7 @@ namespace Tests
 
             using (SQLiteConnection conn = CreateConnection())
             {
+                conn.Open();
                 using (SQLiteCommand command = conn.CreateCommand())
                 {
                     command.CommandText = createPerson;
@@ -131,6 +135,7 @@ namespace Tests
                         command.ExecuteNonQuery();
                     }
                 }
+                conn.Close();
             }
 
         }

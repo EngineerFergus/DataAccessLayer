@@ -30,11 +30,13 @@ namespace DataAccessLayer
                 SQLiteConnection.CreateFile(Dir);
                 using (SQLiteConnection conn = CreateConnection())
                 {
+                    conn.Open();
                     using (SQLiteCommand command = conn.CreateCommand())
                     {
                         command.CommandText = "PRAGMA FOREIGN_KEYS = ON";
                         command.ExecuteNonQuery();
                     }
+                    conn.Close();
                 }
             }
         }

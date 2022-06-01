@@ -68,5 +68,20 @@ namespace Tests
         {
             return;
         }
+
+        public void AssertAreEquivalent(Person compare)
+        {
+            if(compare.ID != ID) { Throw("ID were not equal"); }
+            if (compare.FirstName != FirstName) { Throw("FirstName did not equal"); }
+            if (compare.LastName != LastName) { Throw("LastName did not equal"); }
+            if(compare.Age != Age) { Throw("Age did not equal"); }
+            double dx = Math.Abs(Weight - compare.Weight);
+            if(dx >= 0.0001 * Weight) { Throw("Weight did not meet tolerance"); }
+        }
+
+        private void Throw(string message)
+        {
+            throw new Exception($"Exception in {nameof(Person)}, {message}");
+        }
     }
 }
