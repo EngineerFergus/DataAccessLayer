@@ -311,8 +311,8 @@ namespace DataAccessLayer
         {
             if (!FileExists)
             {
-                throw new Exception($"Exception in {nameof(Database)}.{nameof(CreateConnection)}, sqlite file did not exist " +
-                    $"at {Dir}");
+                throw new Exception($"Exception in {nameof(Database)}.{nameof(CreateConnection)}, " +
+                    $"sqlite file did not exist at {Dir}");
             }
 
             return new SQLiteConnection(@"Data Source= " + Dir);
