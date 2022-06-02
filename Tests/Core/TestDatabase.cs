@@ -10,5 +10,12 @@ namespace Tests
     internal class TestDatabase : Database
     {
         public TestDatabase(string directory) : base(directory) { }
+
+        public override void Initialize()
+        {
+            base.Initialize();
+            CreateTable<Person>();
+            CreateTable<Dog>();
+        }
     }
 }
