@@ -216,6 +216,7 @@ namespace DataAccessLayer
 
                     using (SQLiteDataReader reader = cmd.ExecuteReader())
                     {
+                        reader.Read();
                         table.SetData(reader);
                     }
                 }
@@ -243,6 +244,7 @@ namespace DataAccessLayer
 
                         using (SQLiteDataReader reader = cmd.ExecuteReader())
                         {
+                            reader.Read();
                             table.SetData(reader);
                         }
                     }

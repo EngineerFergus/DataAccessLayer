@@ -61,5 +61,20 @@ namespace Tests
         {
             PersonID = key;
         }
+
+        public void AssertAreEqual(Dog compare)
+        {
+            if (ID != compare.ID) { Throw("IDs did not match"); }
+            if (Name != compare.Name) { Throw("Names did not match"); }
+            if (PersonID != compare.PersonID) { Throw("PersonIDs did not match"); }
+            if (Age != compare.Age) { Throw("Ages did not match"); }
+            double err = Math.Abs(Weight - compare.Weight);
+            if (err >= 0.0001 * Weight) { Throw("Weights did not meet tolerance"); }
+        }
+
+        private void Throw(string message)
+        {
+            throw new Exception($"Exception in {nameof(Dog)}, {message}");
+        }
     }
 }
