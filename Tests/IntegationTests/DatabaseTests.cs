@@ -10,21 +10,22 @@ namespace Tests.IntegationTests
     [TestClass]
     public class DatabaseTests
     {
+        private static TestDatabase testDB = new TestDatabase(DatabaseProvider.TestDir);
+
         [TestClass]
         public class Initializers
         {
             [TestMethod]
             public void InitializesDatabaseWithNoExceptions()
             {
-                TestDatabase testDB = new TestDatabase(DatabaseProvider.TestDir);
-                testDB.Initialize();
+                TestDatabase empty = new TestDatabase(DatabaseProvider.TestDir);
+                empty.Initialize();
             }
         }
 
         [TestClass]
         public class Reads
         {
-            private static TestDatabase testDB = new TestDatabase(DatabaseProvider.TestDir);
 
             [TestInitialize]
             public void Initialize()
@@ -116,6 +117,67 @@ namespace Tests.IntegationTests
                 Person? trueP = DatabaseProvider.People.Where(x => x.ID == 1).FirstOrDefault();
                 Assert.IsNotNull(trueP);
                 trueP.AssertAreEquivalent(p);
+            }
+        }
+
+        [TestClass]
+        public class Inserts
+        {
+            [TestInitialize]
+            public void Initialize()
+            {
+                testDB.Initialize();
+            }
+
+            [TestCleanup]
+            public void Cleanup()
+            {
+                DatabaseProvider.Cleanup();
+            }
+
+            [TestMethod]
+            public void InsertsCollection()
+            {
+                List<Person> tPeople = DatabaseProvider.People.OrderBy(x => x.ID).ToList();
+                testDB.InsertAll(tPeople);
+
+                List<Person> rPeople = testDB.ReadAll<Person>().OrderBy(x => x.ID).ToList();
+
+                for(int i = 0; i < tPeople.Count; i++)
+                {
+                    tPeople[i].AssertAreEquivalent(rPeople[i]);
+                }
+            }
+
+            [TestMethod]
+            public void InsertsSingleTable()
+            {
+                Person tP = DatabaseProvider.People[0];
+                testDB.Insert(tP);
+                Person rP = testDB.ReadByID<Person>(tP.ID);
+                tP.AssertAreEquivalent(rP);
+            }
+
+            [TestMethod]
+            public void UpdatesIDOnInsert()
+            {
+                Person tP = new Person()
+                {
+                    ID = -10
+                };
+
+                testDB.Insert(tP);
+
+                Assert.AreEqual(1, tP.ID);
+            }
+
+            [TestMethod]
+            public void FailsToInsertNonExistantForeignKey()
+            {
+                Assert.ThrowsException<Exception>(() =>
+                {
+                    testDB.InsertAll(DatabaseProvider.Dogs.ToList());
+                });
             }
         }
     }

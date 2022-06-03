@@ -28,16 +28,6 @@ namespace DataAccessLayer
             else
             {
                 SQLiteConnection.CreateFile(Dir);
-                using (SQLiteConnection conn = CreateConnection())
-                {
-                    conn.Open();
-                    using (SQLiteCommand command = conn.CreateCommand())
-                    {
-                        command.CommandText = "PRAGMA FOREIGN_KEYS = ON";
-                        command.ExecuteNonQuery();
-                    }
-                    conn.Close();
-                }
             }
         }
 
@@ -319,7 +309,7 @@ namespace DataAccessLayer
                     $"sqlite file did not exist at {Dir}");
             }
 
-            return new SQLiteConnection(@"Data Source= " + Dir);
+            return new SQLiteConnection(@"Data Source= " + Dir + ";foreign keys=true;");
         }
     }
 }
