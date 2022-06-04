@@ -16,12 +16,8 @@ The DAL provides ways to perform basic CRUD operations on tables. These operatio
 - Read all contents of a table
 - Delete a single object from a table
 - Delete a collection of objects from a table
-
-## Advanced CRUD
-TODO Implement the following operations
 - Read single object by ID
-- Drop table
-- Update child IDs when foreign key is present and changes state
-- Write SQL statements with foreign key when present
-
-Research best ways to handle the tree like nature that comes from using foreign keys. Should the child/referencing tables be inserted as soon as the parent/referenced table is inserted? Or should each object that is considered a child/referencing table just update it's foreign key field and when it is inserted is determined later?
+- Basic foreign key support
+- Tables that inherit DBTable can auto update a foreign key if present and parent table changes state
+## Future Work
+I believe this library offers a quick way to model and set up a SQLite database rather quickly with lower amounts of boilerplate code. However, further reading about data access layers, software architecture and the repository pattern indicate that there are better ways to set up a data access layer that allows for better abstraction. This type of abstraction would be used to hide the implementation details of the database from an application, allowing for better software architecture. This specific implementation ties implementation details with the data class objects that are stored in a database. A better way to implement this would be to make it so that the data access layer can know about the data class objects used by an application, but the data class objects do not know anything about the data access layer. This would insulate the application itself from the implementation of the database, making it easier to potentially change database providers if the requirements of the application demanded it.
