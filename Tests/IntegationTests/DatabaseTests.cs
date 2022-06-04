@@ -21,6 +21,15 @@ namespace Tests.IntegationTests
                 TestDatabase empty = new TestDatabase(DatabaseProvider.TestDir);
                 empty.Initialize();
             }
+
+            [TestMethod]
+            public void EmptyTableReturnsEmptyCollection()
+            {
+                TestDatabase empty = new TestDatabase(DatabaseProvider.TestDir);
+                empty.Initialize();
+                List<Person> people = empty.ReadAll<Person>();
+                Assert.AreEqual(0, people.Count);
+            }
         }
 
         [TestClass]
@@ -178,6 +187,85 @@ namespace Tests.IntegationTests
                 {
                     testDB.InsertAll(DatabaseProvider.Dogs.ToList());
                 });
+            }
+        }
+
+        [TestClass]
+        public class Updates
+        {
+            [TestInitialize]
+            public void Initialize()
+            {
+                DatabaseProvider.Setup();
+            }
+
+            [TestCleanup]
+            public void Cleanup()
+            {
+                DatabaseProvider.Cleanup();
+            }
+
+            [TestMethod]
+            public void UpdatesSingleEntry()
+            {
+                List<Person> people = testDB.ReadAll<Person>();
+                int newAge = 10;
+                people[0].Age = newAge;
+                testDB.Update(people[0]);
+                Person p = testDB.ReadByID<Person>(people[0].ID);
+                Assert.AreEqual(newAge, p.Age);
+            }
+
+            [TestMethod]
+            public void UpdatesCollection()
+            {
+                List<Person> people = testDB.ReadAll<Person>();
+                int newAge = 10;
+                foreach(Person p in people)
+                {
+                    p.Age = newAge;
+                }
+                testDB.UpdateAll(people);
+
+                List<Person> uPeople = testDB.ReadAll<Person>();
+
+                foreach(Person p in uPeople)
+                {
+                    Assert.AreEqual(newAge, p.Age);
+                }
+            }
+        }
+
+        [TestClass]
+        public class Deletes
+        {
+            [TestInitialize]
+            public void Initialize()
+            {
+                DatabaseProvider.Setup();
+            }
+
+            [TestCleanup]
+            public void Cleanup()
+            {
+                DatabaseProvider.Cleanup();
+            }
+
+            [TestMethod]
+            public void DeletesSingleEntry()
+            {
+                List<Dog> dogs = testDB.ReadAll<Dog>();
+                testDB.Delete(dogs[0]);
+                Dog? dDog = testDB.ReadAll<Dog>().Where(x => x.ID == dogs[0].ID).FirstOrDefault();
+                Assert.IsNull(dDog);
+            }
+
+            [TestMethod]
+            public void DeletesCollection()
+            {
+                testDB.DeleteAll(testDB.ReadAll<Dog>());
+                List<Dog> dDogs = testDB.ReadAll<Dog>();
+                Assert.AreEqual(0, dDogs.Count);
             }
         }
     }
