@@ -10,7 +10,7 @@ namespace Tests.IntegationTests
     [TestClass]
     public class DatabaseTests
     {
-        private static TestDatabase testDB = new TestDatabase(DatabaseProvider.TestDir);
+        private readonly static TestDatabase TestDB = new(DatabaseProvider.TestDir);
 
         [TestClass]
         public class Initializers
@@ -51,14 +51,14 @@ namespace Tests.IntegationTests
             [TestMethod]
             public void ReadsPersonCollectionOfCorrectSize()
             {
-                List<Person> people = testDB.ReadAll<Person>();
+                List<Person> people = TestDB.ReadAll<Person>();
                 Assert.AreEqual(DatabaseProvider.People.Length, people.Count);
             }
 
             [TestMethod]
             public void ReadsPersonCollectionWithCorrectValues()
             {
-                List<Person> people = testDB.ReadAll<Person>().OrderBy(x => x.ID).ToList();
+                List<Person> people = TestDB.ReadAll<Person>().OrderBy(x => x.ID).ToList();
                 List<Person> truePeople = DatabaseProvider.People.OrderBy(x => x.ID).ToList();
 
                 for(int i = 0; i < people.Count; i++)
@@ -70,14 +70,14 @@ namespace Tests.IntegationTests
             [TestMethod]
             public void ReadsDogCollectionOfCorrectSize()
             {
-                List<Dog> dogs = testDB.ReadAll<Dog>();
+                List<Dog> dogs = TestDB.ReadAll<Dog>();
                 Assert.AreEqual(DatabaseProvider.Dogs.Length, dogs.Count);
             }
 
             [TestMethod]
             public void ReadsDogWithCorrectValues()
             {
-                List<Dog> dogs = testDB.ReadAll<Dog>().OrderBy(x => x.ID).ToList();
+                List<Dog> dogs = TestDB.ReadAll<Dog>().OrderBy(x => x.ID).ToList();
                 List<Dog> trueDogs = DatabaseProvider.Dogs.OrderBy(x => x.ID).ToList();
 
                 for(int i = 0; i < dogs.Count; i++)
@@ -89,7 +89,7 @@ namespace Tests.IntegationTests
             [TestMethod]
             public void ReadsByID()
             {
-                Person p = testDB.ReadByID<Person>(1);
+                Person p = TestDB.ReadByID<Person>(1);
                 Person? trueP = DatabaseProvider.People.Where(x => x.ID == 1).FirstOrDefault();
                 if(trueP == null) { throw new Exception(); }
 
@@ -101,28 +101,28 @@ namespace Tests.IntegationTests
             {
                 Assert.ThrowsException<InvalidOperationException>(() =>
                 {
-                    Person p = testDB.ReadByID<Person>(10);
+                    Person p = TestDB.ReadByID<Person>(10);
                 });
             }
 
             [TestMethod]
             public void TryReadByIDReturnsTrueOnSuccessfulRead()
             {
-                bool success = testDB.TryReadByID(1, out Person p);
+                bool success = TestDB.TryReadByID(1, out Person p);
                 Assert.IsTrue(success);
             }
 
             [TestMethod]
             public void TryReadByIDReturnsFalseOnFailedRead()
             {
-                bool success = testDB.TryReadByID(10, out Person p);
+                bool success = TestDB.TryReadByID(10, out Person p);
                 Assert.IsFalse(success);
             }
 
             [TestMethod]
             public void TryReadByIDReturnsCorrectValues()
             {
-                bool success = testDB.TryReadByID(1, out Person p);
+                bool success = TestDB.TryReadByID(1, out Person p);
                 Person? trueP = DatabaseProvider.People.Where(x => x.ID == 1).FirstOrDefault();
                 Assert.IsNotNull(trueP);
                 trueP.AssertAreEquivalent(p);
@@ -135,7 +135,7 @@ namespace Tests.IntegationTests
             [TestInitialize]
             public void Initialize()
             {
-                testDB.Initialize();
+                TestDB.Initialize();
             }
 
             [TestCleanup]
@@ -148,9 +148,9 @@ namespace Tests.IntegationTests
             public void InsertsCollection()
             {
                 List<Person> tPeople = DatabaseProvider.People.OrderBy(x => x.ID).ToList();
-                testDB.InsertAll(tPeople);
+                TestDB.InsertAll(tPeople);
 
-                List<Person> rPeople = testDB.ReadAll<Person>().OrderBy(x => x.ID).ToList();
+                List<Person> rPeople = TestDB.ReadAll<Person>().OrderBy(x => x.ID).ToList();
 
                 for(int i = 0; i < tPeople.Count; i++)
                 {
@@ -162,8 +162,8 @@ namespace Tests.IntegationTests
             public void InsertsSingleTable()
             {
                 Person tP = DatabaseProvider.People[0];
-                testDB.Insert(tP);
-                Person rP = testDB.ReadByID<Person>(tP.ID);
+                TestDB.Insert(tP);
+                Person rP = TestDB.ReadByID<Person>(tP.ID);
                 tP.AssertAreEquivalent(rP);
             }
 
@@ -175,7 +175,7 @@ namespace Tests.IntegationTests
                     ID = -10
                 };
 
-                testDB.Insert(tP);
+                TestDB.Insert(tP);
 
                 Assert.AreEqual(1, tP.ID);
             }
@@ -185,7 +185,7 @@ namespace Tests.IntegationTests
             {
                 Assert.ThrowsException<Exception>(() =>
                 {
-                    testDB.InsertAll(DatabaseProvider.Dogs.ToList());
+                    TestDB.InsertAll(DatabaseProvider.Dogs.ToList());
                 });
             }
         }
@@ -208,26 +208,26 @@ namespace Tests.IntegationTests
             [TestMethod]
             public void UpdatesSingleEntry()
             {
-                List<Person> people = testDB.ReadAll<Person>();
+                List<Person> people = TestDB.ReadAll<Person>();
                 int newAge = 10;
                 people[0].Age = newAge;
-                testDB.Update(people[0]);
-                Person p = testDB.ReadByID<Person>(people[0].ID);
+                TestDB.Update(people[0]);
+                Person p = TestDB.ReadByID<Person>(people[0].ID);
                 Assert.AreEqual(newAge, p.Age);
             }
 
             [TestMethod]
             public void UpdatesCollection()
             {
-                List<Person> people = testDB.ReadAll<Person>();
+                List<Person> people = TestDB.ReadAll<Person>();
                 int newAge = 10;
                 foreach(Person p in people)
                 {
                     p.Age = newAge;
                 }
-                testDB.UpdateAll(people);
+                TestDB.UpdateAll(people);
 
-                List<Person> uPeople = testDB.ReadAll<Person>();
+                List<Person> uPeople = TestDB.ReadAll<Person>();
 
                 foreach(Person p in uPeople)
                 {
@@ -254,17 +254,17 @@ namespace Tests.IntegationTests
             [TestMethod]
             public void DeletesSingleEntry()
             {
-                List<Dog> dogs = testDB.ReadAll<Dog>();
-                testDB.Delete(dogs[0]);
-                Dog? dDog = testDB.ReadAll<Dog>().Where(x => x.ID == dogs[0].ID).FirstOrDefault();
+                List<Dog> dogs = TestDB.ReadAll<Dog>();
+                TestDB.Delete(dogs[0]);
+                Dog? dDog = TestDB.ReadAll<Dog>().Where(x => x.ID == dogs[0].ID).FirstOrDefault();
                 Assert.IsNull(dDog);
             }
 
             [TestMethod]
             public void DeletesCollection()
             {
-                testDB.DeleteAll(testDB.ReadAll<Dog>());
-                List<Dog> dDogs = testDB.ReadAll<Dog>();
+                TestDB.DeleteAll(TestDB.ReadAll<Dog>());
+                List<Dog> dDogs = TestDB.ReadAll<Dog>();
                 Assert.AreEqual(0, dDogs.Count);
             }
         }
